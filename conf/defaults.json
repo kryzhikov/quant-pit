@@ -1,0 +1,59 @@
+{
+  "_doc": "Defaults. Do not edit for local changes: put overrides in ~/.config/pit/config.json (same shape, merged key by key). Env values starting with $ are read from the environment at launch, so secrets never live in a file.",
+  "default_profile": "claude",
+  "statusline": true,
+  "profiles": {
+    "claude": {"kind": "agent", "agent": "claude", "cmd": "claude", "env": {}},
+    "opus": {"kind": "agent", "agent": "claude", "cmd": "claude --model opus", "env": {}},
+    "sonnet": {"kind": "agent", "agent": "claude", "cmd": "claude --model sonnet", "env": {}},
+    "haiku": {"kind": "agent", "agent": "claude", "cmd": "claude --model haiku", "env": {}},
+    "gateway": {
+      "_doc": "Claude Code through your own API gateway, any model it serves: `pit new x -p gateway -M <model-id>`. Export PIT_GATEWAY_URL and PIT_GATEWAY_TOKEN in ~/.zshenv. Copy this profile to pin one model per name (add \"cmd\": \"claude --model <id>\"). Untested template.",
+      "kind": "agent", "agent": "claude", "cmd": "claude",
+      "env": {"ANTHROPIC_BASE_URL": "$PIT_GATEWAY_URL", "ANTHROPIC_AUTH_TOKEN": "$PIT_GATEWAY_TOKEN"}
+    },
+    "shell": {"kind": "shell", "cmd": "", "env": {}}
+  },
+  "ui": {"poll_seconds": 1.0, "preview_lines": 80, "bell": true},
+  "panels": ["clocks", "box", "slurm", "gpu", "jira", "wandb"],
+  "panel": {
+    "slurm": {"interval": 20, "scope": "me", "ssh": "", "max_rows": 30},
+    "box": {"interval": 10, "paths": ["~", "/tmp"]},
+    "gpu": {"interval": 10, "ssh": ""},
+    "jira": {"interval": 120, "base_url": "", "token_env": "JIRA_TOKEN", "user_env": "JIRA_USER", "auth": "bearer",
+             "jql": "assignee = currentUser() AND resolution = Unresolved ORDER BY updated DESC", "max_rows": 20},
+    "wandb": {"interval": 60, "base_url": "", "api_key_env": "WANDB_API_KEY", "entity": "", "project": "", "max_rows": 20, "metrics": []}
+  },
+  "clocks": {
+    "_doc": "days = weekday the session OPENS, in the venue's own timezone (Mon=0 .. Sun=6). close <= open means it ends the next day. holidays = list of YYYY-MM-DD local trade dates with no sessions (an overnight session counts toward the date it closes on; an evening session that ends before midnight, like SHFE night, counts toward the date it opens on); none are shipped. Hours are product-specific at futures venues: check them against exchange notices.",
+    "venues": [
+      {"code": "NYSE", "name": "US equities", "tz": "America/New_York", "holidays": [], "sessions": [
+        {"days": [0,1,2,3,4], "open": "04:00", "close": "09:30", "label": "pre"},
+        {"days": [0,1,2,3,4], "open": "09:30", "close": "16:00", "label": "open"},
+        {"days": [0,1,2,3,4], "open": "16:00", "close": "20:00", "label": "post"}]},
+      {"code": "CME", "name": "Globex equity index", "tz": "America/Chicago", "holidays": [], "sessions": [
+        {"days": [6,0,1,2,3], "open": "17:00", "close": "16:00", "label": "open"}]},
+      {"code": "LSE", "name": "London", "tz": "Europe/London", "holidays": [], "sessions": [
+        {"days": [0,1,2,3,4], "open": "08:00", "close": "16:30", "label": "open"}]},
+      {"code": "XETR", "name": "Xetra", "tz": "Europe/Berlin", "holidays": [], "sessions": [
+        {"days": [0,1,2,3,4], "open": "09:00", "close": "17:30", "label": "open"}]},
+      {"code": "TSE", "name": "Tokyo", "tz": "Asia/Tokyo", "holidays": [], "sessions": [
+        {"days": [0,1,2,3,4], "open": "09:00", "close": "11:30", "label": "open"},
+        {"days": [0,1,2,3,4], "open": "12:30", "close": "15:30", "label": "open"}]},
+      {"code": "HKEX", "name": "Hong Kong", "tz": "Asia/Hong_Kong", "holidays": [], "sessions": [
+        {"days": [0,1,2,3,4], "open": "09:30", "close": "12:00", "label": "open"},
+        {"days": [0,1,2,3,4], "open": "13:00", "close": "16:00", "label": "open"}]},
+      {"code": "SSE", "name": "Shanghai A-shares", "tz": "Asia/Shanghai", "holidays": [], "sessions": [
+        {"days": [0,1,2,3,4], "open": "09:30", "close": "11:30", "label": "open"},
+        {"days": [0,1,2,3,4], "open": "13:00", "close": "15:00", "label": "open"}]},
+      {"code": "SHFE", "name": "Shanghai futures (rb)", "tz": "Asia/Shanghai", "holidays": [], "sessions": [
+        {"days": [0,1,2,3,4], "open": "09:00", "close": "10:15", "label": "open"},
+        {"days": [0,1,2,3,4], "open": "10:30", "close": "11:30", "label": "open"},
+        {"days": [0,1,2,3,4], "open": "13:30", "close": "15:00", "label": "open"},
+        {"days": [0,1,2,3,4], "open": "21:00", "close": "23:00", "label": "night"}]},
+      {"code": "CRYPTO", "name": "Crypto", "tz": "UTC", "holidays": [], "sessions": [
+        {"days": [0,1,2,3,4,5,6], "open": "00:00", "close": "00:00", "label": "open"}]}
+    ],
+    "bar": ["NYSE", "CME", "LSE", "HKEX", "SHFE"]
+  }
+}

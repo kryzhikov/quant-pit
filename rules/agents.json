@@ -1,0 +1,18 @@
+{
+  "_doc": "Screen rules: a fallback for when hooks are missing or stale. Each agent lists regex rules tried in order against the last `tail_lines` lines of the pane; the first rule with any matching pattern wins, otherwise `default`. These rot when an agent's UI changes: fix them here (or in ~/.config/pit/agents.json), not in code. `pit explain <session>` shows which rule fired.",
+  "claude": {
+    "tail_lines": 30,
+    "rules": [
+      {"state": "blocked", "any": ["Do you want to (proceed|make this edit|create|allow)", "❯\\s*1\\.\\s*Yes", "Esc to cancel", "Do you trust the files in this folder", "Is this a project you created or one you trust"]},
+      {"state": "working", "any": ["esc to interrupt", "\\(\\d+s\\s*·", "tokens\\s*·\\s*esc"]}
+    ],
+    "default": "idle"
+  },
+  "generic": {
+    "tail_lines": 30,
+    "rules": [
+      {"state": "blocked", "any": ["\\[y/n\\]\\s*$", "\\(y/N\\)\\s*$", "\\(Y/n\\)\\s*$", "[Pp]assword:\\s*$"]}
+    ],
+    "default": "idle"
+  }
+}

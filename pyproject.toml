@@ -1,0 +1,15 @@
+[project]
+name = "pit"
+version = "0.1.0"
+description = "Minimal tmux-based terminal for herding Claude Code and shell sessions, with quant research panels"
+requires-python = ">=3.9"
+dependencies = [
+    "plotext>=5.2,<6",
+    "textual>=0.80",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

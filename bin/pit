@@ -1,0 +1,12 @@
+#!/bin/sh
+# pit launcher. Uses the project venv when it exists (needed for the dashboard),
+# otherwise the system python3, which is enough for every command except `pit ui`.
+self="$0"
+while [ -L "$self" ]; do
+  link=$(readlink "$self")
+  case "$link" in /*) self="$link" ;; *) self="$(dirname "$self")/$link" ;; esac
+done
+PIT_HOME=$(cd "$(dirname "$self")/.." && pwd)
+export PIT_HOME
+if [ -x "$PIT_HOME/.venv/bin/python" ]; then py="$PIT_HOME/.venv/bin/python"; else py=python3; fi
+PYTHONPATH="$PIT_HOME${PYTHONPATH:+:$PYTHONPATH}" exec "$py" -m pit.cli "$@"
